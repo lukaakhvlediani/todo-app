@@ -3,7 +3,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { ControlPanel } from "./ControlPanel";
 import { Item } from "./Item";
+import { Login } from "./Login";
+import { Register } from "./Register";
 import "./Input.css";
+import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 
 export const Input = () => {
   const [todos, setTodos] = useState([]);
@@ -11,15 +16,26 @@ export const Input = () => {
 
   const [edit, setEdit] = useState(false);
   const [filtered, setFiltered] = useState([]);
-  const headers = {
-    token:
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjI2MjY0YTkzOGZhNWQ2ODc1M2E4NGJlIiwiZW1haWwiOiJkZWRpc3RyYWtpQC5jb20ifSwiaWF0IjoxNjUwNjIwMDAwfQ.dNt224M8gSO-2OXUyscyzwGn_Cp0hQgypgUQPHrf0ac",
-  };
+  //const headers = {
+    //token:
+      //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjI2MjY0YTkzOGZhNWQ2ODc1M2E4NGJlIiwiZW1haWwiOiJkZWRpc3RyYWtpQC5jb20ifSwiaWF0IjoxNjUwNjIwMDAwfQ.dNt224M8gSO-2OXUyscyzwGn_Cp0hQgypgUQPHrf0ac",
+  //};
+let navigate = useNavigate()
+  const getHeaders = () =>{
+    const item = localStorage.getItem('user')
+    if(!item){
+      return {}
+    }
+    const data = JSON.parse(item)
 
+    return {
+      token:data.token
+    }
+  }
   const refreshTable = () => {
     axios
       .get("http://localhost:4000/get-todos?filterStatus=all", {
-        headers,
+        headers:getHeaders()
       })
 
       .then((response) => {
@@ -52,7 +68,7 @@ export const Input = () => {
             ...body,
           },
           {
-            headers,
+            headers:getHeaders()
           }
         );
 
@@ -78,7 +94,7 @@ export const Input = () => {
           },
         },
         {
-          headers,
+          headers:getHeaders()
         }
       )
       .then((res) =>
@@ -89,11 +105,13 @@ export const Input = () => {
     check[index].checked = !check[index].checked;
 
     setTodos(check);
+    refreshTable();
   };
 
   const checkall = () => {
     todos.map((todo) => {
       todo.checked = !todo.checked;
+      setTodos([...todos]);
     });
   };
 
@@ -105,11 +123,12 @@ export const Input = () => {
       }
     }
     await axios.delete("http://localhost:4000/delete-todos", {
-      headers,
+       headers:getHeaders(),
       body: {
         ids: ids,
       },
     });
+    refreshTable();
   };
 
   const handleEditing = async (id) => {
@@ -125,7 +144,7 @@ export const Input = () => {
         },
       },
       {
-        headers,
+        headers:getHeaders()
       }
     );
 
@@ -163,6 +182,13 @@ export const Input = () => {
 
   return (
     <div>
+     <button onClick={() => {
+       localStorage.clear()
+       navigate('/')
+       console.log("2131313")
+       }}>Log out</button>
+            <h1>todos</h1>
+    
       <button onClick={() => checkall()}>check all</button>
       <form onSubmit={handleSubmit}>
         <ul className="block">
@@ -173,7 +199,7 @@ export const Input = () => {
             placeholder="what needs to be done?"
           />
           <Item
-            headers={headers}
+            headers={getHeaders()}
             todos={todos}
             checkbox={checkbox}
             handleEditing={handleEditing}
@@ -188,6 +214,7 @@ export const Input = () => {
           />
         </ul>
         <ControlPanel todos={todos} filterTasks={filterTasks} />
+
       </form>
     </div>
   );

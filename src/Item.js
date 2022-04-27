@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import axios from "axios";
 
 export const Item = ({
+  key,
   todos,
   checkbox,
   handleEditing,
@@ -38,12 +39,12 @@ export const Item = ({
   };
 
   return (
-    <div>
+    <div key={todos.id}>
       {filtered &&
         filtered.map((todo, index) => {
           return (
-            <div key={todo.index}>
-              <input
+            <div key={todo.id}>
+              <input key={todo.id}
                 className="block"
                 onChange={() => handlecheck(index, todos[index]._id, checked)}
                 checked={todo.checked ? true : false}
@@ -51,7 +52,7 @@ export const Item = ({
               />
 
               {todo.editing ? (
-                <input
+                <input key={todo.id}
                   ref={inputRef}
                   type="text"
                   className="item"
@@ -63,7 +64,7 @@ export const Item = ({
                   }}
                 />
               ) : (
-                <li
+                <li key={todo.id}
                   onDoubleClick={() => handleEditing(todo._id)}
                   className="item"
                 >
