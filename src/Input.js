@@ -9,7 +9,6 @@ import "./Input.css";
 import { Navigate } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
-
 export const Input = () => {
   const [todos, setTodos] = useState([]);
   const [newTodo, setNewTodo] = useState("");
@@ -17,31 +16,34 @@ export const Input = () => {
   const [edit, setEdit] = useState(false);
   const [filtered, setFiltered] = useState([]);
   //const headers = {
-    //token:
-      //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjI2MjY0YTkzOGZhNWQ2ODc1M2E4NGJlIiwiZW1haWwiOiJkZWRpc3RyYWtpQC5jb20ifSwiaWF0IjoxNjUwNjIwMDAwfQ.dNt224M8gSO-2OXUyscyzwGn_Cp0hQgypgUQPHrf0ac",
+  //token:
+  //"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7ImlkIjoiNjI2MjY0YTkzOGZhNWQ2ODc1M2E4NGJlIiwiZW1haWwiOiJkZWRpc3RyYWtpQC5jb20ifSwiaWF0IjoxNjUwNjIwMDAwfQ.dNt224M8gSO-2OXUyscyzwGn_Cp0hQgypgUQPHrf0ac",
   //};
-let navigate = useNavigate()
-  const getHeaders = () =>{
-    const item = localStorage.getItem('user')
-    if(!item){
-      return {}
+  let navigate = useNavigate();
+  const getHeaders = () => {
+    const item = localStorage.getItem("user");
+    if (!item) {
+      return {};
     }
-    const data = JSON.parse(item)
+    const data = JSON.parse(item);
 
     return {
-      token:data.token
-    }
-  }
+      token: data.token,
+    };
+  };
   const refreshTable = () => {
     axios
       .get("http://localhost:4000/get-todos?filterStatus=all", {
-        headers:getHeaders()
+        headers: getHeaders(),
       })
 
       .then((response) => {
         const { data } = response.data;
-        setFiltered(data);
-        setTodos(data);
+        const userDataJson = localStorage.getItem("user");
+        const userData = JSON.parse(userDataJson);
+        const userTodos = data.filter((todo) => todo.userId === userData.id);
+        setFiltered(userTodos);
+        setTodos(userTodos);
       });
   };
   useEffect(() => {
@@ -68,7 +70,7 @@ let navigate = useNavigate()
             ...body,
           },
           {
-            headers:getHeaders()
+            headers: getHeaders(),
           }
         );
 
@@ -94,7 +96,7 @@ let navigate = useNavigate()
           },
         },
         {
-          headers:getHeaders()
+          headers: getHeaders(),
         }
       )
       .then((res) =>
@@ -123,7 +125,7 @@ let navigate = useNavigate()
       }
     }
     await axios.delete("http://localhost:4000/delete-todos", {
-       headers:getHeaders(),
+      headers: getHeaders(),
       body: {
         ids: ids,
       },
@@ -144,7 +146,7 @@ let navigate = useNavigate()
         },
       },
       {
-        headers:getHeaders()
+        headers: getHeaders(),
       }
     );
 
@@ -182,13 +184,17 @@ let navigate = useNavigate()
 
   return (
     <div>
-     <button onClick={() => {
-       localStorage.clear()
-       navigate('/')
-       console.log("2131313")
-       }}>Log out</button>
-            <h1>todos</h1>
-    
+      <button
+        onClick={() => {
+          localStorage.clear();
+          navigate("/");
+          console.log("2131313");
+        }}
+      >
+        Log out
+      </button>
+      <h1>todos</h1>
+
       <button onClick={() => checkall()}>check all</button>
       <form onSubmit={handleSubmit}>
         <ul className="block">
@@ -214,7 +220,6 @@ let navigate = useNavigate()
           />
         </ul>
         <ControlPanel todos={todos} filterTasks={filterTasks} />
-
       </form>
     </div>
   );
