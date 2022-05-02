@@ -4,9 +4,9 @@ import {Login } from "./Login"
 import {Register} from "./Register"
 import {
   BrowserRouter as Router,
-  Switch,
+
   Route,
-  Link,
+ 
   Routes
 } from "react-router-dom";
 import RequireAuth from "./UseAuth";

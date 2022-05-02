@@ -188,7 +188,7 @@ export const Input = () => {
         onClick={() => {
           localStorage.clear();
           navigate("/");
-          console.log("2131313");
+          // console.log("2131313");
         }}
       >
         Log out
