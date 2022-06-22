@@ -32,6 +32,7 @@ let navigate = useNavigate();
        
   return (
     <div>
+    
            <div>
         <input
         type="text"
@@ -50,6 +51,11 @@ let navigate = useNavigate();
        <button onClick={()=>navigate('Register')}>Register</button>
        
     </div>
+    <button onClick={() =>{
+        navigate("Weather")
+      }}>
+        Weather
+      </button>
     </div>
   )
 }

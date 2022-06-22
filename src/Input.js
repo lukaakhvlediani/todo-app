@@ -136,7 +136,7 @@ export const Input = () => {
   const handleEditing = async (id) => {
     const index = todos.findIndex((item) => item._id === id);
     todos[index].editing = !todos[index].editing;
-    setEdit(!edit);
+    // setEdit(!edit);
 
     const res = await axios.put(
       `http://localhost:4000/${todos[index]._id}/update-todos`,
@@ -184,6 +184,7 @@ export const Input = () => {
 
   return (
     <div>
+
       <button
         onClick={() => {
           localStorage.clear();
